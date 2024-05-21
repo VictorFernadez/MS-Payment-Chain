@@ -1,7 +1,7 @@
 package com.paymentchain.customer.controller;
 
 import com.paymentchain.customer.entities.Customer;
-import com.paymentchain.customer.repository.CustomerRespository;
+import com.paymentchain.customer.repository.CustomerRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,16 +14,16 @@ import java.util.Optional;
 @RequestMapping("/customer")
 @AllArgsConstructor
 public class CustomerController {
-    private final CustomerRespository customerRespository;
+    private final CustomerRepository customerRepository;
 
     @GetMapping
     public List<Customer> findAll() {
-        return customerRespository.findAll();
+        return customerRepository.findAll();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getCustomer(@PathVariable Long id) {
-        Optional<Customer> customer = customerRespository.findById(id);
+        Optional<Customer> customer = customerRepository.findById(id);
         if (customer.isPresent()) {
             return new ResponseEntity<>(customer.get(), HttpStatus.OK);
         }
@@ -32,12 +32,12 @@ public class CustomerController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateCustomer(@PathVariable Long id, @RequestBody Customer customer) {
-        Optional<Customer> optionalCustomer = customerRespository.findById(id);
+        Optional<Customer> optionalCustomer = customerRepository.findById(id);
         if (optionalCustomer.isPresent()) {
             Customer newCustomer = optionalCustomer.get();
             newCustomer.setName(customer.getName());
             newCustomer.setPhone(customer.getPhone());
-            Customer save = customerRespository.save(newCustomer);
+            Customer save = customerRepository.save(newCustomer);
             return new ResponseEntity<>(save, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -45,13 +45,13 @@ public class CustomerController {
 
     @PostMapping
     public ResponseEntity<Customer> createCustomer(@RequestBody Customer customer) {
-        Customer save = customerRespository.save(customer);
+        Customer save = customerRepository.save(customer);
         return ResponseEntity.ok(save);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
-        customerRespository.deleteById(id);
+        customerRepository.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
